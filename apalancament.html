@@ -63,6 +63,10 @@
             <p class=label>Capital: <span id="span_capital"></span></p></br>
             <input type="range" min="1" max="500000" value="150000" class="slider" id="capital">
         </div>
+        <div>
+            <p class=label>Apalancament: <span id="span_leverage"></span></p></br>
+        </div>
+        </br>
     </div>
 
     <div class="back back-casa">
@@ -120,6 +124,10 @@
             <input checked type="radio" name="field" id="cb_beneficis_mensuals">
             <p class=label>Beneficis mensuals: <span id="span_beneficis_mensuals"></span></p></br>
             <input type="range" min="0" max="5000" value="0" class="slider" id="beneficis_mensuals">
+        </div>
+        <div>
+            <p class=label>APR (durant hipoteca): <span id="span_apr"></span></p></br>
+            <p class=label>APR (després hipoteca): <span id="span_apr_after"></span></p></br>
         </div>
     </div>
 
@@ -232,6 +240,15 @@
 
             $('#span_preu_lloguer').text(parseValue(preu_casa.value * rendiment_lloguer.value/100/12, '€'));
             $('#span_preu_ibi').text(parseValue(preu_casa.value * ibi/100/12, '€') + ' (' + parseValue(preu_casa.value * ibi/100, '€') + ')');
+            var pastaFinal = (answer.numer / answer.denom)*12*anys_hipoteca.value + parseFloat(preu_casa.value);
+            var pastaInicial = capital.value;
+            var apr = ( (pastaFinal-pastaInicial)/pastaInicial ) / parseFloat(anys_hipoteca.value) * 100;
+            $('#span_apr').text(parseValue(apr, '%'));
+            var aprAfter = (preu_casa.value * rendiment_lloguer.value/100.0 - preu_casa.value * parseFloat(ibi)/100.0) /
+                ((parseFloat(preu_casa.value) + parseFloat(preu_casa.value) * gastos_casa.value/100.0) * (1 + parseFloat(interes_hipoteca.value)/100)) * 100;
+            $('#span_apr_after').text(parseValue(aprAfter, '%'));
+
+            $('#span_leverage').text(parseValue(capital.value/preu_casa.value*100, '%'));
         }
     </script>
 </body>
