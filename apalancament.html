@@ -9,7 +9,7 @@
     <meta name="author" content="rogribas">
     <link rel="icon" type="image/png" href="./money.png">
 
-    <a href="apalancament.html"><button>APALANCAMENT</button></a>
+    <a href="index.html"><button>ORIGINAL</button></a>
 
     <style>
         body {
@@ -66,13 +66,6 @@
     </div>
 
     <div class="back back-casa">
-        <p class="emoji">🏠</p  class="emoji">
-        <div>
-            <input type="radio" name="field" id="cb_casa">
-            <p class=label>Inversió en casa: <span id="span_casa"></span></p></br>
-            <input type="range" min="1" max="500000" value="150000" class="slider" id="casa">
-        </div>
-        
         <div>
             <input type="radio" name="field" id="cb_preu_casa">
             <p class=label>Preu casa: <span id="span_preu_casa"></span></p></br>
@@ -96,34 +89,29 @@
             <p class=label>Gastos compra casa (%): <span id="span_gastos_casa"></span></p></br>
             <input type="range" min="0" max="20" value="11" class="slider" id="gastos_casa">
         </div>
+
+        <div>
+            <p class=label>Cost hipoteca al mes: <span id="span_hipoteca_mes"></span></p></br>
+        </div>
+        </br>
     </div>
 
     <div class="back back-lloguer">
-        <p  class="emoji">🏢</p>
-        <div>        
-            <input type="radio" name="field" id="cb_lloguer">
-            <p class=label>Inversió en lloguer: <span id="span_lloguer"></span></p></br>
-            <input disabled type="range" min="0" max="500000" value="150000" class="slider" id="lloguer">
-        </div>
-    
         <div>
             <input type="radio" name="field" id="cb_rendiment_lloguer">
             <p class=label>Rendiment lloguer anual (%): <span id="span_rendiment_lloguer"></span></p></br>
-            <input type="range" min="0" max="10" value="5" class="slider" id="rendiment_lloguer">
+            <input type="range" min="0" step="0.01" max="10" value="5" class="slider" id="rendiment_lloguer">
         </div>
     </div>
 
-    <div class="back back-despeses">
-        <p  class="emoji">🔁</p>
+    <div class="back back-lloguer">
         <div>
-            <p class=label>Despesa hipoteca mensual: <span id="span_despesa_hipoteca_mensual"></span></p></br>
-            <input disabled type="range" min="0" max="5000" value="0" class="slider" id="despesa_hipoteca_mensual">
+            <p class=label>Preu lloguer mensual: <span id="span_preu_lloguer"></span></p></br>
         </div>
-            
         <div>
-            <p class=label>Ingressos lloguer mensuals: <span id="span_ingressos_lloguer_mensuals"></span></p></br>
-            <input disabled type="range" min="0" max="5000" value="0" class="slider" id="ingressos_lloguer_mensuals">
+            <p class=label>IBI mensual (anual): <span id="span_preu_ibi"></span></p></br>
         </div>
+        </br>
     </div>
 
     <div class="back back-total">
@@ -153,12 +141,6 @@
             $('#span_capital').text(this.value);
         };
 
-        var casa = document.getElementById("casa");
-        $('#span_casa').text(casa.value);
-        casa.oninput = function() {
-            $('#span_casa').text(this.value);
-        };
-
         var preu_casa = document.getElementById("preu_casa");
         $('#span_preu_casa').text(preu_casa.value);
         preu_casa.oninput = function() {
@@ -183,28 +165,10 @@
             $('#span_gastos_casa').text(this.value);
         };
 
-        var lloguer = document.getElementById("lloguer");
-        $('#span_lloguer').text(lloguer.value);
-        lloguer.oninput = function() {
-            $('#span_lloguer').text(this.value);
-        };
-
         var rendiment_lloguer = document.getElementById("rendiment_lloguer");
         $('#span_rendiment_lloguer').text(rendiment_lloguer.value);
         rendiment_lloguer.oninput = function() {
             $('#span_rendiment_lloguer').text(this.value);
-        };
-
-        var despesa_hipoteca_mensual = document.getElementById("despesa_hipoteca_mensual");
-        $('#span_despesa_hipoteca_mensual').text(despesa_hipoteca_mensual.value);
-        despesa_hipoteca_mensual.oninput = function() {
-            $('#span_despesa_hipoteca_mensual').text(this.value);
-        };
-
-        var ingressos_lloguer_mensuals = document.getElementById("ingressos_lloguer_mensuals");
-        $('#span_ingressos_lloguer_mensuals').text(ingressos_lloguer_mensuals.value);
-        ingressos_lloguer_mensuals.oninput = function() {
-            $('#span_ingressos_lloguer_mensuals').text(this.value);
         };
 
         var beneficis_mensuals = document.getElementById("beneficis_mensuals");
@@ -216,47 +180,39 @@
         function parseValue(value, symbol) {
             return ((Math.round(value*100)/100).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")+ " " + symbol).replace(",","&").replace(".",",").replace("&",".");
         }
-        
+        // casa
+        // lloguer
+        // despesa_hipoteca_mensual
+        // ingressos_lloguer_mensuals
+
         function calcEquation() {
-            if (parseInt(capital.value) < parseInt(casa.value)) {
-                casa.value = capital.value;
-                lloguer.value = 0;
-            }
-            else {
-                var eq1 = "$capital$ - $casa$ - $lloguer$";
-                eq1 = eq1.replace("$capital$", capital.value);
-                eq1 = eq1.replace("$casa$", casa.value);
-                eq1 = eq1.replace("$lloguer$", "x");
-
-                var eq = new Equation(algebra.parse(eq1), 0);
-
-                var answer = eq.solveFor("x");
-                lloguer.value = answer;
-            }
             $('#span_capital').text(parseValue(capital.value, '€'));
-            $('#span_casa').text(parseValue(casa.value, '€'));
-            $('#span_lloguer').text(parseValue(lloguer.value, '€'));
-
-            if (parseInt(casa.value) > parseInt(preu_casa.value) * gastos_casa/100.00) {
-                preu_casa.value = parseInt(preu_casa.value) * gastos_casa/100.00;
-            }
             $('#span_preu_casa').text(parseValue(preu_casa.value, '€'));
-
-            var eq2 = "- $beneficis_mensuals$ + $lloguer$ * $rendiment_lloguer$/100/12 - (($preu_casa$ - $casa$) + $preu_casa$ * $gastos_casa$/100) * (1 - $interes_hipoteca$/100) / ($anys_hipoteca$ * 12)";
+            console.log('1');
+            var ibi = "0.66";
+            var eq2 = ("- $beneficis_mensuals$" +
+                " + $preu_casa$ * $rendiment_lloguer$/100/12" +
+                " - $preu_casa$ * ("+ibi+"/100)/12" +
+                " - (($preu_casa$ - $capital$) + $preu_casa$ * $gastos_casa$/100) * (1 + $interes_hipoteca$/100) / ($anys_hipoteca$ * 12)");
             var checked = $("input[type='radio']:checked").get(0).id.replace("cb_", "");
+            console.log(checked);
             if (checked != 'beneficis_mensuals') eq2 = eq2.replace("$beneficis_mensuals$", beneficis_mensuals.value);
-            if (checked != 'lloguer') eq2 = eq2.replace("$lloguer$", lloguer.value);
             if (checked != 'rendiment_lloguer') eq2 = eq2.replace("$rendiment_lloguer$", rendiment_lloguer.value);
             if (checked != 'preu_casa') eq2 = eq2.replace("$preu_casa$", preu_casa.value);
+            if (checked != 'capital') eq2 = eq2.replace("$capital$", capital.value);
             eq2 = eq2.replace("$preu_casa$", preu_casa.value);
-            if (checked != 'casa') eq2 = eq2.replace("$casa$", casa.value);
+            eq2 = eq2.replace("$preu_casa$", preu_casa.value);
+            eq2 = eq2.replace("$preu_casa$", preu_casa.value);
             if (checked != 'gastos_casa') eq2 = eq2.replace("$gastos_casa$", gastos_casa.value);
             if (checked != 'interes_hipoteca') eq2 = eq2.replace("$interes_hipoteca$", interes_hipoteca.value);
             if (checked != 'anys_hipoteca') eq2 = eq2.replace("$anys_hipoteca$", anys_hipoteca.value);
 
             eq2 = eq2.replace('$' + checked + '$', 'x');
 
+            console.log('2');
+            console.log(eq2);
             var eq = new Equation(algebra.parse(eq2), 0);
+            console.log('3');
 
             var answer = eq.solveFor("x");
             eval(checked + ".value = answer.numer / answer.denom");
@@ -270,12 +226,12 @@
                 $('#span_' + checked).text(parseValue(answer.numer / answer.denom, '€'));
             }
 
-            var ilm_value = lloguer.value * rendiment_lloguer.value / 100.00 / 12.00;
-            var dhm_value = ((preu_casa.value - casa.value) + preu_casa.value * gastos_casa.value/100.00) * (1 - interes_hipoteca.value/100) / (anys_hipoteca.value * 12);
-            ingressos_lloguer_mensuals.value = ilm_value;
-            despesa_hipoteca_mensual.value = dhm_value;
-            $('#span_ingressos_lloguer_mensuals').text(parseValue(ilm_value, '€'));
-            $('#span_despesa_hipoteca_mensual').text(parseValue(dhm_value, '€'));
+            $('#span_hipoteca_mes').text(parseValue(
+                ((preu_casa.value - capital.value) + preu_casa.value * gastos_casa.value/100) * (
+                    1 + interes_hipoteca.value/100) / (anys_hipoteca.value * 12), '€'));
+
+            $('#span_preu_lloguer').text(parseValue(preu_casa.value * rendiment_lloguer.value/100/12, '€'));
+            $('#span_preu_ibi').text(parseValue(preu_casa.value * ibi/100/12, '€') + ' (' + parseValue(preu_casa.value * ibi/100, '€') + ')');
         }
     </script>
 </body>
